@@ -1,0 +1,15 @@
+{
+  "name": "gun-violence-modeling",
+  "homepage": "https://github.com/mariellej/Gun-Violence-Modeling",
+  "authors": [
+    "JustinJoco <justin.joco@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "Cornell",
+  "dependencies": {
+    "bootstrap": "3.2.0",
+    "jquery": "2.1.1",
+    "d3": "3.4.11"
+  }
+}
