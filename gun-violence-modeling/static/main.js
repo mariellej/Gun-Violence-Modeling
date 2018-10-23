@@ -12,11 +12,11 @@ var path = d3.geo.path()               // path generator that will convert GeoJS
     
 // Define linear scale for output
 var color = d3.scale.linear()
-  .domain([0, 8])  
+  .domain([0, 7])  
   .range(["yellow", "red"]); 
 
 
-var legendText = ["0", "1-10", "11-20", "21-30", "31-40", "41-50", "51-60", "61-70"];
+var legendText = ["0-49", "50-99", "100-149", "150-199", "200-249", "250-299", "300-349", "350+"];
 
 
 var svg = d3.select("body")
@@ -32,28 +32,46 @@ var div = d3.select("body")
 
 
 
+//d3.json("us_population_data", function(data){
 
-d3.json("us_states", function(json) {
+ 
 
-// Loop through each state data value in the .csv file
+
+
+
+  d3.json("us_states", function(json) {
   
+  /*
+     for (var i = 0; i<data.length; i++){
+    console.log(data[i]["State"]);
+    console.log(data[i]["2018 Population"]);
 
-  svg.selectAll("path")
-    .data(json.features)
-    .enter()
-    .append("path")
-    .attr("d", path)
-    .style("stroke", "#fff")
-    .style("stroke-width", "1");
+  }*/
 
-});
+
+
+    svg.selectAll("path")
+      .data(json.features)
+      .enter()
+      .append("path")
+      .attr("d", path)
+      .style("stroke", "#fff")
+      .style("stroke-width", "1");
+
+  });
+
+
+//});
 
 
 
 d3.json("incident_data", function(data) {
 states = {};
 dates = [];
+count = 0;
 jQuery.each(data, function(){
+  count+=1;
+  dates.push(this.date);
   state = this.state;
   if (!states[state]){
     states[state] = 1;
@@ -61,9 +79,11 @@ jQuery.each(data, function(){
     states[state]+=1;
 
   }
-  dates.push(this.date);
+  
 });
 
+
+  console.log(count);
 var dateArr = dates.map(function(v) {
   return new Date(v);
 });
@@ -86,7 +106,7 @@ svg.selectAll("path").style("fill", function(d){
   if (Object.keys(states).includes(state)){
     freq = states[state];
 
-    return color(Math.ceil(freq/10));
+    return color(Math.floor(freq/50));
 
 
   }else{
@@ -122,19 +142,19 @@ svg.selectAll("circle")
   .append("circle")
 
   .attr("cx", function(d) {
-    if (d.longitude =="" || d.latitude ==""){
-      return null;
-    }else{
-
+    try{
       return projection([d.longitude, d.latitude])[0];
+    }
+    catch(e){
+      console.log(e.message);
     }
   })
   .attr("cy", function(d) {
-    if (d.longitude =="" || d.latitude ==""){
-      return null;
-    }else{
-
-    return projection([d.longitude, d.latitude])[1];
+    try{
+      return projection([d.longitude, d.latitude])[1];
+    }
+    catch(e){
+      console.log(e.message);
     }
   })
   .attr("r", function(d) {
@@ -200,9 +220,11 @@ d3.select('svg')
   .attr("x", width/2)             
   .attr("y", .07*height)
   .attr("text-anchor", "middle")  
-  .text("Gun Violence Incidence Frequency in US States")
-  .style("font-size","20px")
-  ;
+  .text("US Gun Violence Incidence in March 2018 (4.5k data points)")
+  .style("font-size","20px");
+
+
+
 
 
 
